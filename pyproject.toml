@@ -6,8 +6,6 @@ readme = "README.md"
 authors = [
     { name = "spazza", email = "info@andreaconsonni.dev" }
 ]
-# kept at the oldest Python supported by dbt-core so it installs
-# into any dbt project's environment
 requires-python = ">=3.10"
 dependencies = [
     "tomli>=1.1; python_version < '3.11'",

@@ -83,6 +83,8 @@ class Config:
     path_prefix: str = "data-model"
     locale: str = "en"
     tag: str = "dbt-generated"
+    # delete the generated pages of models that no longer exist
+    delete_stale: bool = False
     user_agent: str = TOOL_NAME
     # page content
     banner: str = DEFAULT_BANNER
@@ -106,7 +108,7 @@ class Config:
 
     @classmethod
     def load(
-        cls, pyproject: Path | None = None, **overrides: str | Path | None
+        cls, pyproject: Path | None = None, **overrides: str | Path | bool | None
     ) -> "Config":
         """Read pyproject.toml and apply the `overrides` that are not None.
 

@@ -36,6 +36,10 @@ class FakeWikiPageStore:
         """Record an update."""
         self.calls.append(("update", page_id, page.path, tuple(tags)))
 
+    def delete_page(self, page: WikiPage) -> None:
+        """Record a deletion."""
+        self.calls.append(("delete", page.id, page.path))
+
 
 def existing(
     page_id: int, path: str, content: str, tags: tuple[str, ...] = (TAG,)
@@ -79,7 +83,7 @@ def test_publish_rules(caplog: pytest.LogCaptureFixture) -> None:
     }
     assert report.stale == ["dm/gone"]
     assert report.summary() == (
-        "Done: 1 created, 1 updated, 1 unchanged, 1 skipped, 1 stale."
+        "Done: 1 created, 1 updated, 1 unchanged, 1 skipped, 1 stale, 0 deleted."
     )
     assert "SKIPPED   dm/manual" in caplog.text
 
@@ -89,3 +93,44 @@ def test_directory_writer(tmp_path: Path) -> None:
     written = DirectoryWriter(tmp_path).write([Page("dm/a", "A", "", "body\n")])
     assert written == [tmp_path / "dm" / "a.md"]
     assert written[0].read_text() == "<!-- title: A -->\nbody\n"
+
+
+def test_delete_stale() -> None:
+    """With delete_stale, generated pages no longer rendered are deleted."""
+    store = FakeWikiPageStore(
+        [
+            existing(1, "dm", "index"),
+            existing(2, "dm/gone", "x"),
+            existing(3, "dm/manual", "by hand", tags=()),
+        ]
+    )
+    publisher = WikiJsPublisher(
+        store, prefix="dm", tag=TAG, locale="en", delete_stale=True
+    )
+
+    report = publisher.publish([Page("dm", "dm", "", "index")])
+
+    assert store.calls == [("list", "en"), ("delete", 2, "dm/gone")]
+    assert (report.stale, report.deleted) == ([], ["dm/gone"])
+
+
+def test_delete_all_only_touches_generated_pages() -> None:
+    """Delete the tagged pages at or under the prefix, nothing else."""
+    store = FakeWikiPageStore(
+        [
+            existing(1, "dm", "index"),
+            existing(2, "dm/a", "x"),
+            existing(3, "dm/b/c", "x"),
+            existing(4, "dm/manual", "by hand", tags=()),
+            existing(5, "dm-old/a", "x"),
+            existing(6, "other/a", "x"),
+        ]
+    )
+    publisher = WikiJsPublisher(store, prefix="dm", tag=TAG, locale="en")
+
+    assert publisher.delete_all() == ["dm", "dm/a", "dm/b/c"]
+    assert [call for call in store.calls if call[0] == "delete"] == [
+        ("delete", 1, "dm"),
+        ("delete", 2, "dm/a"),
+        ("delete", 3, "dm/b/c"),
+    ]

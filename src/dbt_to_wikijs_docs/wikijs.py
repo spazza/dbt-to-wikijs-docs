@@ -34,6 +34,11 @@ mutation ($id: Int!, $content: String!, $description: String!, $title: String!,
                  editor: "markdown", isPublished: true, tags: $tags, title: $title) {
     responseResult { succeeded errorCode slug message } } } }"""
 
+_DELETE_PAGE = """
+mutation ($id: Int!) {
+  pages { delete(id: $id) {
+    responseResult { succeeded errorCode slug message } } } }"""
+
 _SCHEMES = ("http", "https")
 
 
@@ -135,6 +140,11 @@ class WikiJsClient:
             },
         )
         self._check(data["pages"]["update"], "update", page.path)
+
+    def delete_page(self, page: WikiPage) -> None:
+        """Delete a page."""
+        data = self._execute(_DELETE_PAGE, {"id": page.id})
+        self._check(data["pages"]["delete"], "delete", page.path)
 
     def _execute(self, query: str, variables: Mapping[str, Any]) -> dict[str, Any]:
         request = urllib.request.Request(  # noqa: S310 - scheme checked in __init__

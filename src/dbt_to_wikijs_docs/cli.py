@@ -69,10 +69,22 @@ def build_parser() -> argparse.ArgumentParser:
         "--tag", help="tag marking generated pages (default: dbt-generated)"
     )
     parser.add_argument(
+        "--delete-stale",
+        action="store_true",
+        default=None,
+        help="delete the generated pages of models that no longer exist",
+    )
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
         "--dry-run",
         metavar="DIR",
         type=Path,
         help="write the Markdown pages to DIR instead of publishing",
+    )
+    mode.add_argument(
+        "--delete-all",
+        action="store_true",
+        help="delete every generated page under the path prefix, then stop",
     )
     return parser
 
@@ -98,7 +110,13 @@ def _run(args: argparse.Namespace) -> int:
         path_prefix=args.path_prefix,
         locale=args.locale,
         tag=args.tag,
+        delete_stale=args.delete_stale,
     )
+    if args.delete_all:
+        deleted = _publisher(config).delete_all()
+        logger.info("Done: %d deleted.", len(deleted))
+        return 0
+
     pages = DocumentationSite.from_artifacts(config).pages()
 
     if args.dry_run:
@@ -108,17 +126,11 @@ def _run(args: argparse.Namespace) -> int:
         )
         return 0
 
-    publisher = WikiJsPublisher(
-        _client(config),
-        prefix=config.path_prefix,
-        tag=config.tag,
-        locale=config.locale,
-    )
-    logger.info(publisher.publish(pages).summary())
+    logger.info(_publisher(config).publish(pages).summary())
     return 0
 
 
-def _client(config: Config) -> WikiJsClient:
+def _publisher(config: Config) -> WikiJsPublisher:
     url = os.environ.get(URL_VARIABLE) or config.url
     api_key = os.environ.get(API_KEY_VARIABLE)
     if not url or not api_key:
@@ -127,7 +139,13 @@ def _client(config: Config) -> WikiJsClient:
             "or use --dry-run."
         )
         raise ConfigError(msg)
-    return WikiJsClient(url, api_key, user_agent=config.user_agent)
+    return WikiJsPublisher(
+        WikiJsClient(url, api_key, user_agent=config.user_agent),
+        prefix=config.path_prefix,
+        tag=config.tag,
+        locale=config.locale,
+        delete_stale=config.delete_stale,
+    )
 
 
 @contextmanager

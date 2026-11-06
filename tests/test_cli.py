@@ -50,3 +50,10 @@ def test_missing_artifacts(
 
     assert main(["--dry-run", "out"]) == 1
     assert "run `dbt docs generate` first" in capsys.readouterr().err
+
+
+def test_delete_all_excludes_dry_run(capsys: pytest.CaptureFixture[str]) -> None:
+    """--delete-all and --dry-run are different modes."""
+    with pytest.raises(SystemExit):
+        main(["--delete-all", "--dry-run", "out"])
+    assert "not allowed with argument" in capsys.readouterr().err

@@ -1,7 +1,7 @@
 """Writing the rendered pages to a local folder (dry run) or to Wiki.js."""
 
 import logging
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -30,6 +30,10 @@ class WikiPageStore(Protocol):
 
     def update_page(self, page_id: int, page: Page, *, tags: list[str]) -> None:
         """Replace the content of a page."""
+        ...
+
+    def delete_page(self, page: WikiPage) -> None:
+        """Delete a page."""
         ...
 
 
@@ -62,10 +66,12 @@ class Outcome(Enum):
 
 @dataclass
 class PublishReport:
-    """What publishing did to each page, and the generated pages left behind."""
+    """What publishing did to each page, and to the generated pages left behind."""
 
     outcomes: dict[str, Outcome] = field(default_factory=dict)
+    # generated pages no longer rendered: kept, or deleted with delete_stale
     stale: list[str] = field(default_factory=list)
+    deleted: list[str] = field(default_factory=list)
 
     def count(self, outcome: Outcome) -> int:
         """Return the number of pages with `outcome`."""
@@ -76,7 +82,7 @@ class PublishReport:
         counts = ", ".join(
             f"{self.count(outcome)} {outcome.value}" for outcome in Outcome
         )
-        return f"Done: {counts}, {len(self.stale)} stale."
+        return f"Done: {counts}, {len(self.stale)} stale, {len(self.deleted)} deleted."
 
 
 class WikiJsPublisher:
@@ -86,34 +92,61 @@ class WikiJsPublisher:
       without it was written by hand and is never overwritten;
     * a page is only saved when it changed, so the page history only records
       real documentation changes;
-    * nothing is deleted: generated pages under `prefix` that are no longer
-      rendered are reported as stale.
+    * only generated pages are ever deleted: those carrying `tag` under
+      `prefix`. Generated pages no longer rendered (stale) are kept and
+      reported, unless `delete_stale` is set.
     """
 
     def __init__(
-        self, client: WikiPageStore, *, prefix: str, tag: str, locale: str
+        self,
+        client: WikiPageStore,
+        *,
+        prefix: str,
+        tag: str,
+        locale: str,
+        delete_stale: bool = False,
     ) -> None:
         """Publish through `client` the pages under `prefix`, marked with `tag`."""
         self._client = client
         self._prefix = prefix
         self._tag = tag
         self._locale = locale
+        self._delete_stale = delete_stale
 
     def publish(self, pages: Sequence[Page]) -> PublishReport:
-        """Create or update `pages`, then report the stale generated pages."""
+        """Create or update `pages`, then keep or delete the stale generated pages."""
         existing = self._client.list_pages(self._locale)
         report = PublishReport()
         for page in pages:
             current = existing.get(page.path)
             report.outcomes[page.path] = self._publish_page(page, current)
-        report.stale = self._stale_paths(existing, pages)
-        for path in report.stale:
-            logger.warning(
-                "STALE     %s: generated earlier but no longer a mart; "
-                "delete it in Wiki.js if not needed",
-                path,
-            )
+
+        rendered = {page.path for page in pages}
+        stale = [
+            page
+            for path, page in sorted(existing.items())
+            if self._is_generated(page) and path not in rendered
+        ]
+        if self._delete_stale:
+            report.deleted = [self._delete(page) for page in stale]
+        else:
+            report.stale = [page.path for page in stale]
+            for path in report.stale:
+                logger.warning(
+                    "STALE     %s: generated earlier but no longer a mart; "
+                    "delete it with --delete-stale",
+                    path,
+                )
         return report
+
+    def delete_all(self) -> list[str]:
+        """Delete every generated page under the prefix; return their paths."""
+        existing = self._client.list_pages(self._locale)
+        return [
+            self._delete(page)
+            for _, page in sorted(existing.items())
+            if self._is_generated(page)
+        ]
 
     def _publish_page(self, page: Page, current: WikiPage | None) -> Outcome:
         if current is None:
@@ -134,14 +167,14 @@ class WikiJsPublisher:
         logger.info("updated   %s", page.path)
         return Outcome.UPDATED
 
-    def _stale_paths(
-        self, existing: Mapping[str, WikiPage], pages: Sequence[Page]
-    ) -> list[str]:
-        rendered = {page.path for page in pages}
-        return sorted(
-            path
-            for path, page in existing.items()
-            if page.has_tag(self._tag)
-            and path.startswith(self._prefix + "/")
-            and path not in rendered
+    def _is_generated(self, page: WikiPage) -> bool:
+        """Whether this publisher owns `page`: tagged, at or under the prefix."""
+        in_section = page.path == self._prefix or page.path.startswith(
+            self._prefix + "/"
         )
+        return in_section and page.has_tag(self._tag)
+
+    def _delete(self, page: WikiPage) -> str:
+        self._client.delete_page(page)
+        logger.info("deleted   %s", page.path)
+        return page.path

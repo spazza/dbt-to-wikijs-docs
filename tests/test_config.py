@@ -41,6 +41,7 @@ def test_reads_tool_table(pyproject: Callable[[str], Path]) -> None:
 marts-path = "models/gold"
 path-prefix = "/team/data-model/"
 target-dir = "build"
+delete-stale = true
 kind-order = ["dim_", "fct_"]
 
 [tool.dbt-to-wikijs-docs.areas]
@@ -52,6 +53,7 @@ sales = "Sales"
     assert config.marts_path == "models/gold/"
     assert config.path_prefix == "team/data-model"
     assert config.target_dir == Path("build")
+    assert config.delete_stale is True
     assert config.kind_order == ("dim_", "fct_")
     assert list(config.areas) == ["core", "sales"]
     assert config.areas["core"] == Area("Core", "Shared tables.")
