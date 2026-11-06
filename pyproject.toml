@@ -1,0 +1,45 @@
+[project]
+name = "dbt-to-wikijs-docs"
+version = "0.1.0"
+description = "Publish business documentation of dbt models to Wiki.js"
+readme = "README.md"
+authors = [
+    { name = "spazza", email = "info@andreaconsonni.dev" }
+]
+# kept at the oldest Python supported by dbt-core so it installs
+# into any dbt project's environment
+requires-python = ">=3.10"
+dependencies = [
+    "tomli>=1.1; python_version < '3.11'",
+]
+keywords = ["dbt", "wikijs", "documentation", "data-catalog"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Environment :: Console",
+    "Topic :: Documentation",
+    "Topic :: Database",
+]
+
+[project.scripts]
+dbt-to-wikijs-docs = "dbt_to_wikijs_docs:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.8",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]  # long lines are left to judgement
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
