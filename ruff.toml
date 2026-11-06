@@ -1,0 +1,18 @@
+[lint]
+select = ['ALL']
+ignore = [
+    'TRY002', # Generic exception definition
+    'D203',   # Requires a blank line before class docstrings.
+    'D211',   # Forbids a blank line before class docstrings.
+    'D213',   # Multi-line docstring summary must be on the second line.
+    'COM812', # Trailing commas, the formatter handles commas automatically.
+    'S608',   # Internal queries, SQL injection is not a concern in this context.
+] 
+
+preview = false
+
+[format]
+docstring-code-format = true
+
+[lint.per-file-ignores]
+"tests/**" = ['S101'] # pytest is built on assert

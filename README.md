@@ -60,10 +60,51 @@ Command line options override the file: `--config`, `--target-dir`,
 `--marts-path`, `--path-prefix`, `--locale`, `--tag`, `--dry-run DIR`.
 The API key is only read from `WIKIJS_API_KEY`.
 
+## Use as a library
+
+```python
+from dbt_to_wikijs_docs import Config, DocumentationSite, WikiJsClient, WikiJsPublisher
+
+config = Config.load()  # ./pyproject.toml, keyword overrides allowed
+pages = DocumentationSite.from_artifacts(config).pages()  # list[Page]
+
+client = WikiJsClient(url, api_key, user_agent=config.user_agent)
+report = WikiJsPublisher(
+    client, prefix=config.path_prefix, tag=config.tag, locale=config.locale
+).publish(pages)
+print(report.summary())
+```
+
+Errors derive from `DbtToWikiJsError` (`ConfigError`, `ArtifactError`, `WikiJsError`).
+
+## Architecture
+
+```
+dbt_to_wikijs_docs/
+  config.py         Config, Area: the [tool.dbt-to-wikijs-docs] settings
+  dbt/
+    nodes.py        Model, Column, DataTest: immutable domain objects
+    project.py      DbtProject, RelationshipGraph, Relationship
+    artifacts.py    ArtifactLoader: manifest.json + catalog.json -> DbtProject
+  rendering/
+    markdown.py     MarkdownDocument: block builder with escaped tables
+    diagram.py      ModelDiagram: Mermaid flowchart around one model
+    rules.py        RuleDescriber: dbt tests -> plain-language rules
+    links.py        WikiLinks: page paths and links
+    model_page.py   ModelPageRenderer
+    index_page.py   IndexPageRenderer
+    site.py         DocumentationSite: all the pages of a project
+  page.py           Page: what rendering produces and publishing consumes
+  wikijs.py         WikiJsClient (GraphQL), WikiPage, WikiPageContent
+  publishing.py     DirectoryWriter (dry run), WikiJsPublisher, PublishReport
+  cli.py            argument parsing and wiring; the only place that exits
+```
+
 ## Development
 
 ```bash
 uv sync
-uv run pytest
+uv run pytest       # tests/snapshots holds the expected pages of the test project
 uv run ruff check
+uv run mypy         # strict
 ```

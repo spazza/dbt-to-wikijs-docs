@@ -1,5 +1,8 @@
+# Copyright (c) 2026 spazza
+"""Entry point of `python -m dbt_to_wikijs_docs`."""
+
 import sys
 
-from .publisher import main
+from dbt_to_wikijs_docs.cli import main
 
 sys.exit(main())
