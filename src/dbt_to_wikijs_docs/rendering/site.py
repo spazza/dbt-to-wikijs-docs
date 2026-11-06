@@ -1,20 +1,12 @@
-# Copyright (c) 2026 spazza
 """All the pages documenting a dbt project."""
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
-
-from dbt_to_wikijs_docs.dbt import ArtifactLoader
+from dbt_to_wikijs_docs.config import Config
+from dbt_to_wikijs_docs.dbt import ArtifactLoader, DbtProject
+from dbt_to_wikijs_docs.page import Page
 from dbt_to_wikijs_docs.rendering.index_page import IndexPageRenderer
 from dbt_to_wikijs_docs.rendering.links import WikiLinks
 from dbt_to_wikijs_docs.rendering.model_page import ModelPageRenderer
 from dbt_to_wikijs_docs.rendering.rules import RuleDescriber
-
-if TYPE_CHECKING:
-    from dbt_to_wikijs_docs.config import Config
-    from dbt_to_wikijs_docs.dbt import DbtProject
-    from dbt_to_wikijs_docs.page import Page
 
 
 class DocumentationSite:
@@ -31,7 +23,7 @@ class DocumentationSite:
         self._index_renderer = IndexPageRenderer(config, links)
 
     @classmethod
-    def from_artifacts(cls, config: Config) -> DocumentationSite:
+    def from_artifacts(cls, config: Config) -> "DocumentationSite":
         """Document the dbt project whose artifacts are in `config.target_dir`."""
         loader = ArtifactLoader(config.target_dir, config.marts_path)
         return cls(config, loader.load())

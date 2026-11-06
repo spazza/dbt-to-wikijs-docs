@@ -1,16 +1,10 @@
-# Copyright (c) 2026 spazza
 """Shared fixtures."""
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
+from pathlib import Path
 
 import pytest
 
 from tests.factories import data_test_node, model_node, write_project
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 SHOP_PYPROJECT = """
 [tool.dbt-to-wikijs-docs]

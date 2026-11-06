@@ -1,21 +1,15 @@
-# Copyright (c) 2026 spazza
 """Minimal Wiki.js 2.x GraphQL client: the page operations the publisher needs."""
-
-from __future__ import annotations
 
 import json
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from dbt_to_wikijs_docs.errors import WikiJsError
-
-if TYPE_CHECKING:
-    from collections.abc import Mapping
-
-    from dbt_to_wikijs_docs.page import Page
+from dbt_to_wikijs_docs.page import Page
 
 _LIST_PAGES = """
 query ($locale: String) {

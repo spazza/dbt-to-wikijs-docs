@@ -1,4 +1,3 @@
-# Copyright (c) 2026 spazza
 """Publish business documentation of dbt models to Wiki.js.
 
 Command line: `dbt-to-wikijs-docs` (see cli.py). As a library:

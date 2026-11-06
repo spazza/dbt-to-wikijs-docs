@@ -1,14 +1,10 @@
-# Copyright (c) 2026 spazza
 """Generic dbt tests explained as business rules."""
 
-from __future__ import annotations
+from collections.abc import Callable
 
-from typing import TYPE_CHECKING
+from dbt_to_wikijs_docs.dbt import DataTest, DbtProject
 
-if TYPE_CHECKING:
-    from collections.abc import Callable
-
-    from dbt_to_wikijs_docs.dbt import DataTest, DbtProject
+Describer = Callable[[DataTest], str | None]
 
 
 class RuleDescriber:
@@ -20,7 +16,7 @@ class RuleDescriber:
     def __init__(self, project: DbtProject) -> None:
         """Describe tests of `project`, naming linked models by business name."""
         self._project = project
-        self._describers: dict[str, Callable[[DataTest], str | None]] = {
+        self._describers: dict[str, Describer] = {
             "not_null": lambda _test: "Always filled",
             "unique": lambda _test: "Unique",
             "accepted_values": self._accepted_values,

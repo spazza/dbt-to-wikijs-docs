@@ -1,20 +1,14 @@
-# Copyright (c) 2026 spazza
 """The documented models of a dbt project and the relationships between them."""
 
-from __future__ import annotations
-
 from collections import defaultdict
+from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass
 from functools import cached_property
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator, Sequence
-
-    from dbt_to_wikijs_docs.dbt.nodes import Model
+from dbt_to_wikijs_docs.dbt.nodes import Model
 
 # model name -> [(target model, column holding the link)]
-_DirectLinks = dict[str, list[tuple[str, "str | None"]]]
+_DirectLinks = dict[str, list[tuple[str, str | None]]]
 
 
 @dataclass(frozen=True)
@@ -59,7 +53,7 @@ class DbtProject:
         )
 
     @cached_property
-    def relationships(self) -> RelationshipGraph:
+    def relationships(self) -> "RelationshipGraph":
         """Relationships between the visible models."""
         return RelationshipGraph.from_project(self)
 
@@ -80,7 +74,7 @@ class RelationshipGraph:
             self._incoming[relationship.target].append(relationship)
 
     @classmethod
-    def from_project(cls, project: DbtProject) -> RelationshipGraph:
+    def from_project(cls, project: DbtProject) -> "RelationshipGraph":
         """Build the graph of the relationships tests of `project`.
 
         A hidden model (e.g. a many-to-many bridge) is not documented, so a

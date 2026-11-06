@@ -1,4 +1,3 @@
-# Copyright (c) 2026 spazza
 """Settings read from the `[tool.dbt-to-wikijs-docs]` table of pyproject.toml.
 
 A dbt project configures the tool like this:
@@ -16,12 +15,10 @@ Every key is optional. Command line options override the file; the Wiki.js
 API key is only read from the environment.
 """
 
-from __future__ import annotations
-
 import sys
 from dataclasses import dataclass, field, fields
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from dbt_to_wikijs_docs.errors import ConfigError
 
@@ -30,8 +27,7 @@ if sys.version_info >= (3, 11):
 else:
     import tomli as tomllib
 
-if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, Sequence
 
 TOOL_NAME = "dbt-to-wikijs-docs"
 DEFAULT_PYPROJECT = Path("pyproject.toml")
@@ -52,12 +48,12 @@ class Area:
     description: str = ""
 
     @classmethod
-    def from_folder(cls, folder: str) -> Area:
+    def from_folder(cls, folder: str) -> "Area":
         """Build the section of a folder the configuration does not describe."""
         return cls(folder.replace("_", " ").title())
 
     @classmethod
-    def parse(cls, folder: str, raw: object, source: Path) -> Area:
+    def parse(cls, folder: str, raw: object, source: Path) -> "Area":
         """Build an area from its TOML value: a title, or a title and description."""
         if isinstance(raw, str):
             return cls(raw)
@@ -111,7 +107,7 @@ class Config:
     @classmethod
     def load(
         cls, pyproject: Path | None = None, **overrides: str | Path | None
-    ) -> Config:
+    ) -> "Config":
         """Read pyproject.toml and apply the `overrides` that are not None.
 
         `pyproject` defaults to ./pyproject.toml, which may be missing; an

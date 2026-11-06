@@ -1,12 +1,6 @@
-# Copyright (c) 2026 spazza
 """Where the generated pages live in Wiki.js, and links between them."""
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from dbt_to_wikijs_docs.dbt import DbtProject
+from dbt_to_wikijs_docs.dbt import DbtProject
 
 
 class WikiLinks:

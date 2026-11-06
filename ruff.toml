@@ -7,6 +7,7 @@ ignore = [
     'D213',   # Multi-line docstring summary must be on the second line.
     'COM812', # Trailing commas, the formatter handles commas automatically.
     'S608',   # Internal queries, SQL injection is not a concern in this context.
+    'CPY001', # No copyright header on top of files.
 ] 
 
 preview = false

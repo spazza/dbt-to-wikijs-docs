@@ -1,4 +1,3 @@
-# Copyright (c) 2026 spazza
 """Exceptions raised by the package; the command line turns them into a message."""
 
 

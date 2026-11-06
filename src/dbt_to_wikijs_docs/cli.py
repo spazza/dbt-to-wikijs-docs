@@ -1,4 +1,3 @@
-# Copyright (c) 2026 spazza
 r"""Publish business documentation of the dbt marts to Wiki.js (2.x).
 
 Reads the artifacts written by `dbt docs generate` (target/manifest.json and,
@@ -21,24 +20,19 @@ Usage (after `dbt docs generate`):
         dbt-to-wikijs-docs
 """
 
-from __future__ import annotations
-
 import argparse
 import logging
 import os
 import sys
+from collections.abc import Generator, Sequence
 from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from dbt_to_wikijs_docs.config import TOOL_NAME, Config
 from dbt_to_wikijs_docs.errors import ConfigError, DbtToWikiJsError
 from dbt_to_wikijs_docs.publishing import DirectoryWriter, WikiJsPublisher
 from dbt_to_wikijs_docs.rendering import DocumentationSite
 from dbt_to_wikijs_docs.wikijs import WikiJsClient
-
-if TYPE_CHECKING:
-    from collections.abc import Generator, Sequence
 
 URL_VARIABLE = "WIKIJS_URL"
 API_KEY_VARIABLE = "WIKIJS_API_KEY"

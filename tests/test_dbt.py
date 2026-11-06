@@ -1,9 +1,7 @@
-# Copyright (c) 2026 spazza
 """Tests of the dbt domain model and the artifact loader."""
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
+from collections.abc import Iterable
+from pathlib import Path
 
 import pytest
 
@@ -17,10 +15,6 @@ from dbt_to_wikijs_docs.dbt import (
     Relationship,
 )
 from tests.factories import data_test_node, model_node, write_project
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
-    from pathlib import Path
 
 
 def make_model(

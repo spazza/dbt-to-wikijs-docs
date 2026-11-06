@@ -1,18 +1,12 @@
-# Copyright (c) 2026 spazza
 """Tests of the dry-run writer and the Wiki.js publisher."""
 
-from __future__ import annotations
-
 import logging
-from typing import TYPE_CHECKING
+from pathlib import Path
+
+import pytest
 
 from dbt_to_wikijs_docs import DirectoryWriter, Outcome, Page, WikiJsPublisher
 from dbt_to_wikijs_docs.wikijs import WikiPage, WikiPageContent
-
-if TYPE_CHECKING:
-    from pathlib import Path
-
-    import pytest
 
 TAG = "dbt-generated"
 

@@ -1,7 +1,4 @@
-# Copyright (c) 2026 spazza
 """Plain-text helpers shared by the dbt model and the renderers."""
-
-from __future__ import annotations
 
 import re
 

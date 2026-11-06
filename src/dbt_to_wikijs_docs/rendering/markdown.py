@@ -1,12 +1,6 @@
-# Copyright (c) 2026 spazza
 """Building Markdown documents block by block."""
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Sequence
 
 
 class MarkdownDocument:

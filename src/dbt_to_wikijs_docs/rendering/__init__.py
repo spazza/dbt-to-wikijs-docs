@@ -1,4 +1,3 @@
-# Copyright (c) 2026 spazza
 """The Markdown side: model pages, the index page and their building blocks."""
 
 from dbt_to_wikijs_docs.rendering.index_page import IndexPageRenderer

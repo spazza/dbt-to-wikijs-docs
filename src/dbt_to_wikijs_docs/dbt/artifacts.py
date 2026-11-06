@@ -1,23 +1,18 @@
-# Copyright (c) 2026 spazza
 """Reading the artifacts written by `dbt docs generate` into the domain objects.
 
 This is the only module that knows the layout of manifest.json and catalog.json.
 """
 
-from __future__ import annotations
-
 import json
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any
+from collections.abc import Iterable
+from pathlib import Path
+from typing import Any
 
 from dbt_to_wikijs_docs.dbt.nodes import Column, DataTest, Model
 from dbt_to_wikijs_docs.dbt.project import DbtProject
 from dbt_to_wikijs_docs.errors import ArtifactError
 from dbt_to_wikijs_docs.text import collapse_whitespace
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
-    from pathlib import Path
 
 Node = dict[str, Any]
 

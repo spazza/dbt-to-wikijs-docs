@@ -1,13 +1,8 @@
-# Copyright (c) 2026 spazza
 """Builders of fake dbt artifacts."""
 
-from __future__ import annotations
-
 import json
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    from pathlib import Path
+from pathlib import Path
+from typing import Any
 
 Node = dict[str, Any]
 

@@ -1,19 +1,14 @@
-# Copyright (c) 2026 spazza
 """Writing the rendered pages to a local folder (dry run) or to Wiki.js."""
 
-from __future__ import annotations
-
 import logging
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, Protocol
+from pathlib import Path
+from typing import Protocol
 
-if TYPE_CHECKING:
-    from collections.abc import Iterable, Mapping, Sequence
-    from pathlib import Path
-
-    from dbt_to_wikijs_docs.page import Page
-    from dbt_to_wikijs_docs.wikijs import WikiPage, WikiPageContent
+from dbt_to_wikijs_docs.page import Page
+from dbt_to_wikijs_docs.wikijs import WikiPage, WikiPageContent
 
 logger = logging.getLogger(__name__)
 

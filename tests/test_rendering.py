@@ -1,7 +1,4 @@
-# Copyright (c) 2026 spazza
 """Tests of the Markdown rendering."""
-
-from __future__ import annotations
 
 from pathlib import Path
 

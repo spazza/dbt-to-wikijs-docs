@@ -1,4 +1,3 @@
-# Copyright (c) 2026 spazza
 """The dbt side: documented models, their tests and relationships."""
 
 from dbt_to_wikijs_docs.dbt.artifacts import ArtifactLoader

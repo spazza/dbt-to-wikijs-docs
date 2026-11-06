@@ -1,18 +1,12 @@
-# Copyright (c) 2026 spazza
 """Tests of the command line."""
-
-from __future__ import annotations
 
 import subprocess
 import sys
-from typing import TYPE_CHECKING
+from pathlib import Path
 
 import pytest
 
 from dbt_to_wikijs_docs import main
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 def test_module_entry_point() -> None:

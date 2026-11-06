@@ -1,20 +1,13 @@
-# Copyright (c) 2026 spazza
 """The page documenting one model."""
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
-
+from dbt_to_wikijs_docs.config import Config
+from dbt_to_wikijs_docs.dbt import Column, DbtProject, Model, Relationship
 from dbt_to_wikijs_docs.page import Page
 from dbt_to_wikijs_docs.rendering.diagram import ModelDiagram
+from dbt_to_wikijs_docs.rendering.links import WikiLinks
 from dbt_to_wikijs_docs.rendering.markdown import MarkdownDocument
+from dbt_to_wikijs_docs.rendering.rules import RuleDescriber
 from dbt_to_wikijs_docs.text import first_sentence
-
-if TYPE_CHECKING:
-    from dbt_to_wikijs_docs.config import Config
-    from dbt_to_wikijs_docs.dbt import Column, DbtProject, Model, Relationship
-    from dbt_to_wikijs_docs.rendering.links import WikiLinks
-    from dbt_to_wikijs_docs.rendering.rules import RuleDescriber
 
 
 class ModelPageRenderer:

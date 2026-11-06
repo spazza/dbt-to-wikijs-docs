@@ -1,7 +1,4 @@
-# Copyright (c) 2026 spazza
 """The unit exchanged between rendering and publishing."""
-
-from __future__ import annotations
 
 from dataclasses import dataclass
 

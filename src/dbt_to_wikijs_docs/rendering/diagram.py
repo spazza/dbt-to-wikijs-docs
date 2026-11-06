@@ -1,7 +1,4 @@
-# Copyright (c) 2026 spazza
 """Mermaid diagram of a model and its neighbours."""
-
-from __future__ import annotations
 
 import re
 

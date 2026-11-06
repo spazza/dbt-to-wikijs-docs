@@ -1,17 +1,11 @@
-# Copyright (c) 2026 spazza
 """Tests of the [tool.dbt-to-wikijs-docs] settings."""
 
-from __future__ import annotations
-
+from collections.abc import Callable
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import pytest
 
 from dbt_to_wikijs_docs import Area, Config, ConfigError
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
 
 
 @pytest.fixture

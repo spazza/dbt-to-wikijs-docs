@@ -106,5 +106,4 @@ dbt_to_wikijs_docs/
 uv sync
 uv run pytest       # tests/snapshots holds the expected pages of the test project
 uv run ruff check
-uv run mypy         # strict
 ```

@@ -1,16 +1,26 @@
-# Copyright (c) 2026 spazza
 """The dbt objects the documentation is built from, whatever the artifact format."""
 
-from __future__ import annotations
-
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    from collections.abc import Mapping
+from typing import Any
 
 _REF = re.compile(r"ref\(\s*['\"]([^'\"]+)['\"]")
+
+
+@dataclass(frozen=True)
+class Column:
+    """A model column as documented: yml description, database name and type."""
+
+    name: str
+    description: str = ""
+    data_type: str = ""
+    hidden: bool = False
+
+    @property
+    def key(self) -> str:
+        """Case-insensitive identity: dbt and the database may spell it differently."""
+        return self.name.lower()
 
 
 @dataclass(frozen=True)
@@ -43,21 +53,6 @@ class DataTest:
     def applies_to(self, column: Column) -> bool:
         """Whether the test checks `column`."""
         return self.column_name is not None and self.column_name.lower() == column.key
-
-
-@dataclass(frozen=True)
-class Column:
-    """A model column as documented: yml description, database name and type."""
-
-    name: str
-    description: str = ""
-    data_type: str = ""
-    hidden: bool = False
-
-    @property
-    def key(self) -> str:
-        """Case-insensitive identity: dbt and the database may spell it differently."""
-        return self.name.lower()
 
 
 @dataclass(frozen=True)

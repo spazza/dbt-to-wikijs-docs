@@ -1,22 +1,14 @@
-# Copyright (c) 2026 spazza
 """The index page listing the documented models by area."""
 
-from __future__ import annotations
-
 from collections import defaultdict
-from typing import TYPE_CHECKING
+from collections.abc import Iterable
 
-from dbt_to_wikijs_docs.config import Area
+from dbt_to_wikijs_docs.config import Area, Config
+from dbt_to_wikijs_docs.dbt import Model
 from dbt_to_wikijs_docs.page import Page
+from dbt_to_wikijs_docs.rendering.links import WikiLinks
 from dbt_to_wikijs_docs.rendering.markdown import MarkdownDocument
 from dbt_to_wikijs_docs.text import first_sentence
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
-
-    from dbt_to_wikijs_docs.config import Config
-    from dbt_to_wikijs_docs.dbt import Model
-    from dbt_to_wikijs_docs.rendering.links import WikiLinks
 
 
 class IndexPageRenderer:
