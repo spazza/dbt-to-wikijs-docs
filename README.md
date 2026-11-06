@@ -134,4 +134,3 @@ report = WikiJsPublisher(
 
 print(report.summary())
 ```
-
